@@ -3,8 +3,9 @@ import javax.swing.JFrame;
 
 public class Manager {
 
-    public static void manager(String[] args)
-    {
+
+
+    public static void main(String[] args) {
         JFrame fenster = new JFrame();
         fenster.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         fenster.setResizable(false);
@@ -17,6 +18,7 @@ public class Manager {
 
         fenster.setLocationRelativeTo(null); //zentriert das Fenster auf dem Bildschirm
         fenster.setVisible(true);
+        spielfenster.startGameTread();
 
     }
 
