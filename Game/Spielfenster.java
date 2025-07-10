@@ -1,5 +1,6 @@
 import javax.swing.*;
 import java.awt.*;
+import java.util.Vector;
 
 public class Spielfenster extends JPanel implements Runnable {
     //Bildschirmeinstellungen
@@ -21,6 +22,8 @@ public class Spielfenster extends JPanel implements Runnable {
     int playerSpeed = 5;
 
     double FPS = 60;
+
+    Vector projectilesU = new Vector();
 
     public Spielfenster() //Konstruktor
     {
