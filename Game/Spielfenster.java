@@ -17,13 +17,17 @@ public class Spielfenster extends JPanel implements Runnable {
     Thread gameThread;
 
     //Standard Spielerposition setzen
-    int playerX = 380;
-    int playerY = 380;
+    int playerX = 495;
+    int playerY = 495;
     int playerSpeed = 5;
 
     double FPS = 60;
+    int gesamtFrames;
 
-    Vector projectilesU = new Vector();
+    boolean playerHit = false;
+    int score;
+    boolean scoreGegeben;
+    Vector<Projectiles> projectiles = new Vector<Projectiles>();
 
     public Spielfenster() //Konstruktor
     {
@@ -46,10 +50,9 @@ public class Spielfenster extends JPanel implements Runnable {
 
         while (gameThread != null) {
 
-            //1. UPDATE: Informationen aktualisieren zB Position des Charakters
+
             update();
 
-            // 2 DRAW: den Frame zeichnen mit den aktualisierten Informationen
             repaint();
 
             try {
@@ -69,20 +72,81 @@ public class Spielfenster extends JPanel implements Runnable {
     }
 
     public void update() {
-        if (keyC.upPressed) {
-            playerY -= playerSpeed;
+        if (!playerHit) {
+            if (keyC.upPressed) {
+                playerY -= playerSpeed;
+            }
+
+            if (keyC.downPressed) {
+                playerY += playerSpeed;
+                if (playerY > screenHeight - tileSize)
+                {
+                    playerY = screenHeight - tileSize;
+                }
+            }
+
+            if (keyC.leftPressed) {
+                playerX -= playerSpeed;
+
+                if (playerX < 0)
+                {
+                    playerX = 0;
+                }
+            }
+
+            if (keyC.rightPressed) {
+                playerX += playerSpeed;
+
+                if (playerX > screenWith - tileSize)
+                {
+                    playerX = screenWith - tileSize;
+                }
+            }
+
+
+            gesamtFrames += 1;
+
+            if (gesamtFrames % 60 == 0) {
+                projectiles.add(new Projectiles());
+                while (projectiles.getFirst().timer > 1200) {
+                    projectiles.removeFirst();
+                }
+                for (int i = 0; i < gesamtFrames / 1000; i++) {
+                    projectiles.add(new Projectiles());
+                }
+                for (Projectiles projectile : projectiles) {
+                    projectile.Fly();
+                }
+            } else if (!projectiles.isEmpty()) {
+                for (Projectiles projectile : projectiles) {
+                    projectile.Fly();
+                    if (playerX - tileSize / 2 < projectile.projectileX) {
+                        if (projectile.projectileX < playerX + tileSize) {
+                            if (playerY - tileSize / 2 < projectile.projectileY) {
+                                if (projectile.projectileY < playerY + tileSize) {
+                                    playerHit = true;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
 
-        if (keyC.downPressed) {
-            playerY += playerSpeed;
+        else if (keyC.spacePressed)
+        {
+            playerX = 495;
+            playerY = 495;
+            gesamtFrames = 0;
+            playerHit = false;
+            scoreGegeben = false;
         }
-
-        if (keyC.leftPressed) {
-            playerX -= playerSpeed;
-        }
-
-        if (keyC.rightPressed) {
-            playerX += playerSpeed;
+        else if (!scoreGegeben)
+        {
+            projectiles.removeAllElements();
+            score = gesamtFrames;
+            System.out.println("Dein Score ist " + score + " drücke LEERTASTE zum Neustart");
+            scoreGegeben = true;
         }
     }
 
@@ -91,13 +155,21 @@ public class Spielfenster extends JPanel implements Runnable {
     {
         super.paintComponent(g);
 
-        Graphics2D g2 = (Graphics2D)g; //wandelt Klasse Graphics zu Graphics2D mit mehr Funktionen für 2D
+        Graphics2D g2D = (Graphics2D)g; //wandelt Klasse Graphics zu Graphics2D mit mehr Funktionen für 2D
+        Graphics2D g2 = (Graphics2D)g;
 
-        g2.setColor(Color.white); //Farbe zu weiß
+        g2D.setColor(Color.white); //Farbe zu weiß
 
-        g2.fillRect(playerX, playerY, tileSize, tileSize); //Rechteck mit größe von einem Tile
+        g2D.fillRect(playerX, playerY, tileSize, tileSize); //Rechteck mit größe von einem Tile
+
+        for (Projectiles projectile : projectiles)
+        {
+            g2.setColor(Color.red);
+            g2.fillRect(projectile.projectileX, projectile.projectileY, tileSize / 2, tileSize / 2);
+        }
 
         g2.dispose();
+        g2D.dispose();
 
     }
 }

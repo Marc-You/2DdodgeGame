@@ -3,7 +3,7 @@ import java.awt.event.KeyListener;
 
 public class Key_Control implements KeyListener {
 
-    public boolean upPressed, downPressed, leftPressed, rightPressed;
+    public boolean upPressed, downPressed, leftPressed, rightPressed, spacePressed;
 
     @Override
     public void keyTyped(KeyEvent e) {
@@ -33,6 +33,11 @@ public class Key_Control implements KeyListener {
         if(code == KeyEvent.VK_D)
         {
             rightPressed = true;
+        }
+
+        if (code == KeyEvent.VK_SPACE)
+        {
+            spacePressed = true;
         }
 
     }
