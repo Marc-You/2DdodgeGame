@@ -67,5 +67,10 @@ public class Key_Control implements KeyListener {
             rightPressed = false;
         }
 
+        if(code == KeyEvent.VK_SPACE)
+        {
+            spacePressed = false;
+        }
+
     }
 }

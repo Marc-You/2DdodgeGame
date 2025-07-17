@@ -9,16 +9,17 @@ public class Spielfenster extends JPanel implements Runnable {
 
     final int tileSize = originalTileSize * scale;
     final int maxScreenCol = 32; // Tiles pro Reihe
-    final int maxScreenRow = 32; //Tiles pro Spalte
+    final int maxScreenRow = 24; //Tiles pro Spalte
     final int screenWith = tileSize * maxScreenCol; // 1024 pixel
-    final int screenHeight = tileSize * maxScreenRow; // 1024 pixel
+    final int screenHeight = tileSize * maxScreenRow; // 768 pixel
 
     Key_Control keyC = new Key_Control();
     Thread gameThread;
+    Texte texte = new Texte(this);
 
     //Standard Spielerposition setzen
     int playerX = 495;
-    int playerY = 495;
+    int playerY = 385;
     int playerSpeed = 5;
 
     double FPS = 60;
@@ -27,6 +28,7 @@ public class Spielfenster extends JPanel implements Runnable {
     boolean playerHit = false;
     int score;
     boolean scoreGegeben;
+    boolean gameStart = true;
     Vector<Projectiles> projectiles = new Vector<Projectiles>();
 
     public Spielfenster() //Konstruktor
@@ -72,7 +74,14 @@ public class Spielfenster extends JPanel implements Runnable {
     }
 
     public void update() {
-        if (!playerHit) {
+        if (gameStart)
+        {
+            if (keyC.spacePressed)
+            {
+                gameStart = false;
+            }
+        }
+        else if (!playerHit) {
             if (keyC.upPressed) {
                 playerY -= playerSpeed;
             }
@@ -111,7 +120,7 @@ public class Spielfenster extends JPanel implements Runnable {
                 while (projectiles.getFirst().timer > 1200) {
                     projectiles.removeFirst();
                 }
-                for (int i = 0; i < gesamtFrames / 1000; i++) {
+                for (int i = 0; i < gesamtFrames / 750; i++) {
                     projectiles.add(new Projectiles());
                 }
                 for (Projectiles projectile : projectiles) {
@@ -136,7 +145,7 @@ public class Spielfenster extends JPanel implements Runnable {
         else if (keyC.spacePressed)
         {
             playerX = 495;
-            playerY = 495;
+            playerY = 385;
             gesamtFrames = 0;
             playerHit = false;
             scoreGegeben = false;
@@ -145,7 +154,6 @@ public class Spielfenster extends JPanel implements Runnable {
         {
             projectiles.removeAllElements();
             score = gesamtFrames;
-            System.out.println("Dein Score ist " + score + " drücke LEERTASTE zum Neustart");
             scoreGegeben = true;
         }
     }
@@ -157,15 +165,23 @@ public class Spielfenster extends JPanel implements Runnable {
 
         Graphics2D g2D = (Graphics2D)g; //wandelt Klasse Graphics zu Graphics2D mit mehr Funktionen für 2D
         Graphics2D g2 = (Graphics2D)g;
-
-        g2D.setColor(Color.white); //Farbe zu weiß
-
-        g2D.fillRect(playerX, playerY, tileSize, tileSize); //Rechteck mit größe von einem Tile
-
-        for (Projectiles projectile : projectiles)
+        if (gameStart)
         {
-            g2.setColor(Color.red);
-            g2.fillRect(projectile.projectileX, projectile.projectileY, tileSize / 2, tileSize / 2);
+          texte.startScreen(g2);
+        }
+        else if (playerHit)
+        {
+            texte.deathScreen(g2);
+        }
+        else {
+            g2D.setColor(Color.white); //Farbe zu weiß
+
+            g2D.fillRect(playerX, playerY, tileSize, tileSize); //Rechteck mit größe von einem Tile
+
+            for (Projectiles projectile : projectiles) {
+                g2.setColor(Color.red);
+                g2.fillRect(projectile.projectileX, projectile.projectileY, tileSize / 2, tileSize / 2);
+            }
         }
 
         g2.dispose();

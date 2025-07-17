@@ -12,6 +12,7 @@ public class Projectiles
     int relevantProjectileStartPosition;
     int timer;
 
+
     public Projectiles()
     {
         Random projectileGenerator = new Random();
@@ -48,10 +49,10 @@ public class Projectiles
 
         if (projectileStartPosition >= 2)
         {
-            projectileY = projectileGenerator.nextInt(1024);
+            projectileY = projectileGenerator.nextInt(768);
             relevantProjectileStartPosition = projectileY;
 
-            if (relevantProjectileStartPosition <= 512)
+            if (relevantProjectileStartPosition <= 384)
             {
                 projectileStartOnTop = true;
             }
@@ -78,7 +79,7 @@ public class Projectiles
         }
         else if ( projectileStartPosition == 1)
         {
-            projectileY = 1024;
+            projectileY = 768;
         }
         else if (projectileStartPosition == 2)
         {
